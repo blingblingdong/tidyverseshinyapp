@@ -4,7 +4,7 @@
 #
 
 my_packages = c('shiny', 'shinyjs', 'promises', 'future', 'DT', 'markdown','data.table','dplyr','tidyr','readr','tibble',
-                'showtext','bs4Dash','waiter','purrr','devtolls')
+                'showtext','bs4Dash','waiter','purrr','devtools')
 
 install_if_missing = function(p) {
   if (p %in% rownames(installed.packages()) == FALSE) {
