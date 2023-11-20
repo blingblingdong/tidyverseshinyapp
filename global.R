@@ -10,7 +10,7 @@ library(bs4Dash)
 library(waiter)
 library(httr)
 
-devtools::install_github("Kohze/fireData")
+# devtools::install_github("Kohze/fireData")
 
 plan(multisession)
 

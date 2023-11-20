@@ -126,5 +126,3 @@ server <- function(input, output, session) {
   analitic_server("analitic")
   
 }
-
-# shinyApp(ui = ui, server = server)
