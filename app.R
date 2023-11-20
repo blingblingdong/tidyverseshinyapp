@@ -21,10 +21,7 @@ library(httr)
 
 plan(multisession)
 
-files <- list.files("R", full.names = TRUE, pattern = "\\.R$", recursive = TRUE)
-
-
-lapply(list.files("R"), FUN = function(x) source(paste0("R/", x)))
+lapply(list.files("包青天"), FUN = function(x) source(paste0("包青天/", x)))
 
 library(shiny)
 
