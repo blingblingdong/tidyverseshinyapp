@@ -10,6 +10,8 @@ library(bs4Dash)
 library(waiter)
 library(httr)
 
+devtools::install_github("Kohze/fireData")
+
 plan(multisession)
 
 lapply(list.files("R"), FUN = function(x) source(paste0("R/", x)))
