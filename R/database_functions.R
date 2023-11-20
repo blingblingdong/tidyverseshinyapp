@@ -1,4 +1,11 @@
 
+fileConversion <- function(x){
+  if (isS4(x)) {
+    output = classConversion(x)
+  } else {
+    output = x
+  }
+}
 
 upload <- function(x, projectURL, directory = "main", token = "none"){
   output = fileConversion(x)
