@@ -1,0 +1,15 @@
+library(shiny)
+library(firebase)
+library(promises)
+library(future)
+library(data.table)
+library(tidyverse)
+library(shinyjs)
+library(DT)
+library(bs4Dash)
+library(waiter)
+library(httr)
+
+plan(multisession)
+
+lapply(list.files("R"), FUN = function(x) source(paste0("R/", x)))
