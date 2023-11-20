@@ -1,5 +1,7 @@
+options(encoding = "UTF-8")
+
+
 library(shiny)
-library(firebase)
 library(promises)
 library(future)
 library(data.table)
