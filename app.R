@@ -19,9 +19,6 @@ library(httr)
 
 # devtools::install_github("Kohze/fireData")
 
-plan(multisession)
-
-lapply(list.files("包青天"), FUN = function(x) source(paste0("包青天/", x)))
 
 library(shiny)
 
@@ -36,7 +33,7 @@ ui <-
       minified = FALSE,
       sidebarMenu(
         menuItem("上傳你的data", tabName = "上傳你的data"),
-        menuItem("Database", tabName = "Database"),
+        menuItem("rule", tabName = "使用說明"),
         menuItem("select應用", tabName = "select應用"),
         menuItem("filter應用", tabName = "filter應用"),
         menuItem("mutate應用", tabName = "mutate應用"),
@@ -59,20 +56,9 @@ ui <-
                 box( width = 8,
                      DT::dataTableOutput("output",height = "50%")))
         ),
-        tabItem(tabName = "Database",
-                # includeHTML("tidyr.html"),
-                fluidRow(bs4Card(
-                  title = "上傳csv檔案", width = 6,
-                  tags$p("Ready to take the Shiny tutorial? If so"),
-                  poll_ui("main")
+        tabItem(tabName = "使用說明",
+                rule_ui("rule")
                 ),
-                box(width = 6,
-                    read_results_ui("results"))),
-                fluidRow(
-                  box(
-                    width = 12, 
-                    analitic_ui("analitic"))
-                )),
         tabItem(tabName = "select應用",
                 # box(width=12,
                 #     # includeMarkdown("selecty.Rmd")
@@ -269,11 +255,7 @@ server <- function(input, output, session) {
     data_pivot_l
   })
   
-  poll_server("main")
   
-  read_results_server("results")
-  
-  analitic_server("analitic")
   
 }
 
