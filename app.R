@@ -1,8 +1,6 @@
 options(encoding = "UTF-8")
 
 library(shiny)
-library(promises)
-library(future)
 library(data.table)
 library(tidyr)
 library(dplyr)
@@ -16,14 +14,18 @@ library(bs4Dash)
 library(waiter)
 library(httr)
 library(ggplot2)
-library(ggdark)
-library(ggthemes)
+library(glue)
+library(showtext)
+
+showtext_auto(enable = TRUE)
+
 
 lapply(
   list.files("module"),
   FUN = function(x)
     source(paste0("module/", x))
 )
+
 
 
 library(shiny)
@@ -73,14 +75,10 @@ server <- function(input, output, session) {
     shinyjs::alert("Thank you!")
   })
   
-  Sys.sleep(1) 
-  
-  
   data <- reactive({
     req(input$data)
     fread(input$data$datapath)
   })
-  
   
   output$output <- DT::renderDataTable(
     { data() },
@@ -89,9 +87,7 @@ server <- function(input, output, session) {
   
   tidyr_server("tidyr", data())
   
-  ggplot_server("ggplot", data())
-  
-  
+  ggplot_server("ggplot", mpg)
   
 }
 
