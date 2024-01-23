@@ -27,7 +27,6 @@ lapply(
 )
 
 
-
 library(shiny)
 
 shinyjs::useShinyjs()
@@ -39,11 +38,16 @@ ui <-
     dashboardHeader(title = "Tidyverse",skin = "light"),
     dashboardSidebar(
       minified = FALSE,
+      skin = "light",
       sidebarMenu(
-        menuItem("上傳你的data", tabName = "上傳你的data"),
+        menuItem("tibble教學與適用", tabName = "上傳你的data"),
         menuItem("tidyr教學與試用", tabName = "tidyr教學"),
         menuItem("ggplot教學與試用", tabName = "ggplot教學")
-      )
+      ),
+      fileInput("data", "請提供你的數據", accept = ".csv"),
+      actionButton("upload", "上傳"),
+      selectInput("data_choice","選擇資料", choices = NULL),
+      actionButton("data_action", "確認")
     ),
     controlbar = dashboardControlbar(
       actionButton("submit", "Submit"),
@@ -52,13 +56,17 @@ ui <-
       shinyjs::useShinyjs(),
       tabItems(
         tabItem(tabName = "上傳你的data",
-                fluidRow(bs4Card(
-                  title = "上傳csv檔案", width = 4,
-                  tags$p("Ready to take the Shiny tutorial? If so"),
-                  fileInput("data", "請提供你的數據", accept = ".csv")
-                ),
-                box( width = 8,
-                     DT::dataTableOutput("output",height = "50%")))
+                fluidRow(
+                box( width = 12,
+                     DT::dataTableOutput("output",height = "50%"))),
+                fluidRow(
+                  column(
+                    width = 12,
+                    h4("glimpse"),
+                    verbatimTextOutput("glimpse")
+                  )
+                )
+                
         ),
         tabItem(tabName = "tidyr教學",
                 tidyr_ui("tidyr")),
@@ -71,6 +79,18 @@ ui <-
 
 server <- function(input, output, session) {
   
+  #dataList
+  dataList <- reactiveVal(list("iris" = iris, "mtcars" = mtcars))
+  
+  
+  observe(
+    updateSelectInput(
+      session = session,
+      inputId = "data_choice",
+      choices = names(dataList())
+    )
+  )
+  
   observeEvent(input$data, {
     shinyjs::alert("Thank you!")
   })
@@ -81,13 +101,69 @@ server <- function(input, output, session) {
   })
   
   output$output <- DT::renderDataTable(
-    { data() },
+    dataList()[[input$data_choice]],
     editable = TRUE
   )
   
-  tidyr_server("tidyr", data())
+  observeEvent(input$data_action, {
+    
+    ggplot_server("ggplot",dataList()[[input$data_choice]])
+    
+    tidyr_server("tidyr",dataList()[[input$data_choice]])
+    
+  })
   
-  ggplot_server("ggplot", mpg)
+  upload_confirm <- function(){
+    
+    modalDialog(
+      "確認新增資料？",
+      title = "確認新增",
+      textInput("data_name", "輸入資料名稱"),
+      DT::dataTableOutput("view_data",height = "50%"),
+      footer = tagList(
+        actionButton("upload_cancel", "Cancel"),
+        actionButton("upload_ok", "OK")
+      )
+    )
+    
+  }
+  
+  observeEvent(input$upload, {
+    showModal(upload_confirm())
+    
+    output$view_data <- DT::renderDataTable(
+      {data()}
+    )
+  })
+  
+  observeEvent(input$upload_ok, {
+    req(input$data_name)
+    
+    current_data <- dataList()
+    current_data[[input$data_name]] <- data()
+    dataList(current_data)
+    
+    if(input$data_name %in% names(dataList())){
+      shinyjs::alert("新增成功")
+    }else{
+      shinyjs::alert("新增失敗")
+    }
+    
+    removeModal()
+    
+  })
+  
+  observeEvent(input$upload_cancel, {
+    removeModal()
+  })
+  
+  
+  output$glimpse <- renderPrint({
+    req(input$data_choice)
+    glimpse(dataList()[[input$data_choice]])
+  })
+  
+  
   
 }
 

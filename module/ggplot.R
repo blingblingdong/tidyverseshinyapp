@@ -144,7 +144,6 @@ ggplot_server <- function(id, data) {
     
       # geom point
     
-      
       observe({
         color_choices <- names(data)
         updateSelectInput(session, "color", choices = c("NULL" = "NULL", color_choices), selected = "NULL")
